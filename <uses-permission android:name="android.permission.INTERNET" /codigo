@@ -1,0 +1,78 @@
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/urlInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Insira o link" />
+
+    <Button
+        android:id="@+id/checkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verificar" />
+
+    <TextView
+        android:id="@+id/resultText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp" />
+</LinearLayout>
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val urlInput = findViewById<EditText>(R.id.urlInput)
+        val checkButton = findViewById<Button>(R.id.checkButton)
+        val resultText = findViewById<TextView>(R.id.resultText)
+
+        checkButton.setOnClickListener {
+            val url = urlInput.text.toString()
+            if (isPhishingLink(url)) {
+                resultText.text = """
+                    Cuidado! Esse link pode ser phishing.
+                    Aqui estão cinco dicas para verificar se um e-mail pode ser phishing:
+                    1. Verifique o remetente: Veja se o endereço de e-mail é legítimo e corresponde ao domínio oficial da empresa ou serviço.
+                    2. Desconfie de links suspeitos: Passe o mouse sobre os links (sem clicar) para ver o endereço real e verifique se ele parece legítimo.
+                    3. Procure erros de gramática: Muitos e-mails de phishing contêm erros gramaticais ou ortográficos.
+                    4. Não forneça informações pessoais: Nunca compartilhe senhas, números de cartão de crédito ou outras informações sensíveis por e-mail.
+                    5. Desconfie de urgência: E-mails que criam um senso de urgência para que você tome uma ação rápida geralmente são suspeitos.
+                """.trimIndent()
+            } else {
+                resultText.text = "Esse link parece seguro."
+            }
+        }
+    }
+
+    private fun isPhishingLink(url: String): Boolean {
+        // Verificação por padrões comuns em links de phishing
+        val phishingPatterns = listOf(
+            "gratis", "ganhar", "premio", "clique", "verificar", "conta", "banco", "senha",
+            "atualizacao", "urgente", "confirmacao", "seguranca", "bloqueio", "acesso", "promocao",
+            "oferta", "desconto", "recompensa", "ganhe", "ajuda", "verifique", "alerta", "suporte",
+            "instrucao", "comprovacao", "resolucao", "documento", "anexo", "acordo", "compra", "transacao",
+            "solicitacao", "prorrogacao", "novo", "voce ganhou", "codigo", "autorizacao", "registro",
+            "endereco", "informacoes pessoais", "confidencial", "urgencia", "perigo", "atendimento", "recuperacao",
+            "fatura", "inscricao", "subscricao", "certificacao", "notificacao", "informe", "contato"
+        )
+        for (pattern in phishingPatterns) {
+            if (url.contains(pattern, ignoreCase = true)) {
+                return true
+            }
+        }
+        return false
+    }
+}
